@@ -53,7 +53,8 @@ ListContainer.addEventListener("click", (e) => {
     let newTask = prompt("Edit your task:", currentTask);
     if (newTask !== null && newTask.trim() !== "") {
       e.target.parentElement.firstChild.textContent = newTask; // Update the task
-    }
+    }else 
+    span1.style.display = "none";
     saveData();
   }
 });
