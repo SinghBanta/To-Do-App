@@ -12,6 +12,11 @@
         "type": "image/png"
       },
       {
+        "src": "images/icon.png",
+        "sizes": "384x384",
+        "type": "image/png"
+      },
+      {
         "src": "images/list.png",
         "sizes": "512x512",
         "type": "image/png"
