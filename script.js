@@ -1,80 +1,97 @@
 const inputArea = document.getElementById("InputArea");
 const ListContainer = document.getElementById("List-container");
+const themeToggle = document.getElementById("themeToggle");
+const html = document.documentElement;
+
+// Initialize theme from localStorage
+function initTheme(){
+  const savedTheme = localStorage.getItem("theme") || "light";
+  setTheme(savedTheme);
+}
+
+function setTheme(theme){
+  html.setAttribute("data-theme", theme);
+  localStorage.setItem("theme", theme);
+  themeToggle.textContent = theme === "dark" ? "☀️" : "🌙";
+}
+
+themeToggle.addEventListener("click", () => {
+  const currentTheme = html.getAttribute("data-theme") || "light";
+  const newTheme = currentTheme === "dark" ? "light" : "dark";
+  setTheme(newTheme);
+});
+
+initTheme();
 
 function addTask() {
-  //function to add task
-  if (inputArea.value === "") {
-    alert("You must write something");
-  } else {
-    let li = document.createElement("li");
-    li.innerHTML = inputArea.value;
-    ListContainer.appendChild(li);
-    let span = document.createElement("span");
-    span.innerHTML = "\u00d7";
-    li.appendChild(span);
-
-    // Create span for edit icon
-    let editIcon = document.createElement("span1");
-    editIcon.innerHTML = "\u270E";
-    editIcon.className = "edit";
-    li.appendChild(editIcon);
-    ListContainer.appendChild(li);
-
-    // Prepend I use so that most recent task come to the top of the list
-    ListContainer.prepend(li);
-
-    //for smooth behaviour of scrollbar
-    ListContainer.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+  if (inputArea.value.trim() === "") {
+    alert("Please enter a task");
+    return;
   }
+
+  let li = document.createElement("li");
+  let taskText = document.createElement("span");
+  taskText.className = "task-text";
+  taskText.textContent = inputArea.value;
+  li.appendChild(taskText);
+
+  let actionsDiv = document.createElement("div");
+  actionsDiv.className = "actions";
+
+  let deleteBtn = document.createElement("span");
+  deleteBtn.textContent = "×";
+  deleteBtn.className = "delete";
+  deleteBtn.style.cursor = "pointer";
+  actionsDiv.appendChild(deleteBtn);
+
+  li.appendChild(actionsDiv);
+  ListContainer.prepend(li);
+
+  ListContainer.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+
   inputArea.value = "";
   saveData();
 }
 
-// when we press enter key our task added also
 inputArea.addEventListener("keydown", (e) => {
-  if (e.key == "Enter") {
-    //try consle.log(e) here once.
+  if (e.key === "Enter") {
     addTask();
   }
 });
 
-//function for list container
 ListContainer.addEventListener("click", (e) => {
-  if (e.target.tagName === "LI") {
-    e.target.classList.toggle("checked");
-  } else if (e.target.tagName === "SPAN") {
-    e.target.parentElement.remove();
+  if (e.target.classList.contains("task-text")) {
+    e.target.parentElement.classList.toggle("checked");
     saveData();
-  } else if (e.target.classList.contains("edit")) {
-    let currentTask = e.target.parentElement.firstChild.textContent;
-    let newTask = prompt("Edit your task:", currentTask);
-    if (newTask !== null && newTask.trim() !== "") {
-      e.target.parentElement.firstChild.textContent = newTask; // Update the task
-    }else 
-    span1.style.display = "none";
+  } else if (e.target.classList.contains("delete")) {
+    e.target.closest("li").remove();
     saveData();
   }
 });
 
-//Save data in local storage
 function saveData() {
   localStorage.setItem("data", ListContainer.innerHTML);
 }
 
-//show Data or data is saved even after refresh the window.
 function showData() {
-  ListContainer.innerHTML = localStorage.getItem("data");
+  ListContainer.innerHTML = localStorage.getItem("data") || "";
+  
+  // Re-attach event listeners after loading data
+  document.querySelectorAll("#List-container li .task-text").forEach((el) => {
+    el.style.cursor = "pointer";
+  });
 }
+
 showData();
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker
     .register("/service-worker.js")
     .then((registration) => {
-      console.log("Service Worker registered with scope:", registration.scope);
+      console.log("Service Worker registered:", registration.scope);
     })
     .catch((error) => {
       console.log("Service Worker registration failed:", error);
@@ -84,25 +101,19 @@ if ("serviceWorker" in navigator) {
 let deferredPrompt;
 
 window.addEventListener("beforeinstallprompt", (event) => {
-  // Prevent the mini-infobar from appearing on mobile
   event.preventDefault();
-  // Save the event so it can be triggered later
   deferredPrompt = event;
-  // Show the install button
   const installBtn = document.getElementById("install-btn");
-  installBtn.style.display = "block";
+  installBtn.style.display = "flex";
 
   installBtn.addEventListener("click", () => {
-    // Hide the install button
     installBtn.style.display = "none";
-    // Show the install prompt
     deferredPrompt.prompt();
-    // Wait for the user to respond to the prompt
     deferredPrompt.userChoice.then((choiceResult) => {
       if (choiceResult.outcome === "accepted") {
-        console.log("User accepted the install prompt");
+        console.log("User accepted install prompt");
       } else {
-        console.log("User dismissed the install prompt");
+        console.log("User dismissed install prompt");
       }
       deferredPrompt = null;
     });
