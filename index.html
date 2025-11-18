@@ -6,40 +6,45 @@
     <title>To Do List</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="manifest" href="/manifest.json">
-    
-
   </head>
   <body>
     <div class="container">
-      <h2>To Do List  <img src="images/list.png" alt="To Do List" width="40px" /></h2>
+      <div class="card">
+        <div class="header">
+          <h1 class="title">Tasks</h1>
+          <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+        </div>
+        <p class="subtitle">Stay organized and productive</p>
 
-      <div class="AddList">
-        <input type="text" id="InputArea" placeholder="Add your task" />
-        
-        <button class="button" onclick="addTask()" style="cursor: pointer;">Add</button>
+        <div class="add-row">
+          <input 
+            type="text" 
+            id="InputArea" 
+            class="input"
+            placeholder="Add a new task..." 
+            aria-label="Task input"
+          />
+          <button class="button" onclick="addTask()" aria-label="Add task">
+            Add
+          </button>
+        </div>
 
-      </div>
-
-      <div class="AddTask">
-        <ul id="List-container">
-            <!-- <li class="checked">Task 1</li>
-            <li>Task 2</li>
-            <li>Task 3</li> -->
-        </ul>
+        <div class="AddTask">
+          <ul id="List-container" aria-label="Task list">
+            <!-- Tasks will be added here -->
+          </ul>
+        </div>
       </div>
 
       <div class="github">
-        <a href="https://github.com/SinghBanta/To-Do-App"><img src="images/github.svg" alt="Github" width="40px" /></a>
+        <a href="https://github.com/SinghBanta/To-Do-App" aria-label="GitHub repository">
+          <img src="images/github.svg" alt="GitHub" />
+        </a>
       </div>
 
-      <div id="install-btn">
-        <img src="images/install.png" alt="Install" width="58px" />
-
+      <div id="install-btn" aria-label="Install app">
+        <img src="images/install.png" alt="Install" />
       </div>
-
-      
-
-     
     </div>
 
     <script src="script.js"></script>
